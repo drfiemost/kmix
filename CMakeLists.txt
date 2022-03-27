@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8.12)
 project(kmix)
 
 # CMake build file for KMix. It supports both KDE4 and KF5.
@@ -16,11 +17,9 @@ endif()
 
 # Your project should require at least CMake 2.8.12 to use FindKF5.cmake
 if (KMIX_KF5_BUILD)
-   cmake_minimum_required(VERSION 2.8.12)
    add_definitions( -DX_KMIX_KF5_BUILD )
    add_definitions( -DTRANSLATION_DOMAIN=\"kmix\" )
 else ()
-   cmake_minimum_required(VERSION 2.8.11)
    set(CMAKE_AUTOMOC ON)
 endif()
 
