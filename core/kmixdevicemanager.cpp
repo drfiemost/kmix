@@ -21,22 +21,14 @@
 #include "core/kmixdevicemanager.h"
 #include <kdebug.h>
 
-#ifdef X_KMIX_KF5_BUILD
-#ifdef __GNUC__
-#warning KMix KF5 build does not support hotplugging yet
-#endif
-#endif
-
 #include <iostream>
 
 #include <QRegExp>
 #include <QString>
 
-#ifndef X_KMIX_KF5_BUILD
 #include <solid/device.h>
 #include <solid/devicenotifier.h>
 #include <solid/audiointerface.h>
-#endif
 
 KMixDeviceManager* KMixDeviceManager::s_KMixDeviceManager = 0;
 
@@ -58,19 +50,12 @@ KMixDeviceManager* KMixDeviceManager::instance()
 
 void KMixDeviceManager::initHotplug()
 {
-#ifndef X_KMIX_KF5_BUILD
 	connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)), SLOT(pluggedSlot(QString)) );
     connect (Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)), SLOT(unpluggedSlot(QString)) );
-#endif
 }
 
 QString KMixDeviceManager::getUDI_ALSA(int num)
 {
-#ifdef X_KMIX_KF5_BUILD
-	QString udi("hw%i");
-	udi.arg(num);
-	return udi;
-#else
 	QList<Solid::Device> dl = Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface);
 
 	QString numString;
@@ -134,15 +119,10 @@ QString KMixDeviceManager::getUDI_ALSA(int num)
 		}
 	} // foreach
 	return udi;
-#endif
 }
 
 QString KMixDeviceManager::getUDI_OSS(const QString& devname)
 {
-#ifdef X_KMIX_KF5_BUILD
-	QString udi(devname);
-	return udi;
-#else
     QList<Solid::Device> dl = Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface);
 
     bool found = false;
@@ -170,15 +150,11 @@ QString KMixDeviceManager::getUDI_OSS(const QString& devname)
         if ( found) break;
     } // foreach
     return udi;
-#endif
 }
 
 
-void KMixDeviceManager::pluggedSlot(const QString& udi) {
-#ifdef X_KMIX_KF5_BUILD
-return;
-#else
-
+void KMixDeviceManager::pluggedSlot(const QString& udi)
+{
 //   std::cout << "Plugged udi='" <<  udi.toUtf8().data() << "'\n";
    Solid::Device device(udi);
    Solid::AudioInterface *audiohw = device.as<Solid::AudioInterface>();
@@ -209,7 +185,6 @@ return;
                break;
        }
     }
-#endif
 }
 
 

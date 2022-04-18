@@ -35,9 +35,6 @@
 
 // Qt
 #include <QList>
-#ifndef X_KMIX_KF5_BUILD
-#define QStringLiteral QLatin1String
-#endif
 
 // STD Headers
 #include <stdlib.h>
@@ -1000,12 +997,12 @@ Mixer_ALSA::errorText( int mixer_error )
 QString
 ALSA_getDriverName()
 {
-	return QStringLiteral("ALSA");
+	return QLatin1String("ALSA");
 }
 
 QString Mixer_ALSA::getDriverName()
 {
-	return QStringLiteral("ALSA");
+	return QLatin1String("ALSA");
 }
 
 

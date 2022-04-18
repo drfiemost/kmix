@@ -25,9 +25,6 @@
 #include <QWidget>
 #include <QString>
 #include <QStringBuilder>
-#ifndef X_KMIX_KF5_BUILD
-#define QStringLiteral QLatin1String
-#endif
 
 //#include <kdebug.h>
 #include <klocale.h>
@@ -40,7 +37,7 @@
 
 
 MixerToolBox* MixerToolBox::s_instance      = 0;
-QRegExp MixerToolBox::s_ignoreMixerExpression( QStringLiteral( "Modem" ));
+QRegExp MixerToolBox::s_ignoreMixerExpression( QLatin1String( "Modem" ));
 //KLocale* MixerToolBox::s_whatsthisLocale = 0;
 
 /***********************************************************************************
@@ -117,7 +114,7 @@ void MixerToolBox::initMixerInternal(MultiDriverMode multiDriverMode, QList<QStr
    {
       QString driverName = Mixer::driverName(drv1);
       if ( driverInfo.length() > 0 ) {
-         driverInfo += QStringLiteral(" + ");
+         driverInfo += QLatin1String(" + ");
       }
       driverInfo += driverName;
    }

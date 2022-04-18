@@ -46,10 +46,6 @@
 #include "core/mixer.h"
 #include "core/version.h"
 
-#ifndef X_KMIX_KF5_BUILD
-#define QStringLiteral QLatin1String
-#endif
-
 
 K_PLUGIN_FACTORY(KMixDFactory,
                  registerPlugin<KMixD>();
@@ -86,7 +82,7 @@ KMixD::KMixD(QObject* parent, const QList<QVariant>&) :
    KDEDModule(parent),
    m_multiDriverMode (false) // -<- I never-ever want the multi-drivermode to be activated by accident
 {
-    setObjectName( QStringLiteral("KMixD" ));
+    setObjectName( QLatin1String("KMixD" ));
 	GlobalConfig::init();
 	kWarning() << "kmixd: Triggering delayed initialization";
 	QTimer::singleShot( 3000, this, SLOT(delayedInitialization()));

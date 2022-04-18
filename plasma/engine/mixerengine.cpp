@@ -406,11 +406,7 @@ Plasma::Service* MixerEngine::serviceForSource(const QString& source)
 	return new MixerService( this, curci->iface );
 }
 
-#ifdef X_KMIX_KF5_BUILD
-K_EXPORT_PLASMA_DATAENGINE_WITH_JSON(mixer, MixerEngine, "plasma-dataengine-mixer.json")
-#else
 K_EXPORT_PLASMA_DATAENGINE(mixer, MixerEngine)
-#endif // X_KMIX_KF5_BUILD
 
 
 #include "mixerengine.moc"

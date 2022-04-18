@@ -67,22 +67,11 @@
 #include "gui/dialogaddview.h"
 #include "gui/dialogselectmaster.h"
 #include "dbus/dbusmixsetwrapper.h"
-#ifdef X_KMIX_KF5_BUILD
-#include <QtDBus/QDBusInterface>
-#include <QtDBus/QDBusPendingCall>
-#else
 #include "gui/osdwidget.h"
-#endif
 
-#ifdef X_KMIX_KF5_BUILD
-#define CLASS_Action QAction
-#include <QKeySequence>
-#define CLASS_KShortcut QKeySequence
-#else
 #define CLASS_Action KAction
 #define CLASS_KShortcut KShortcut
 #define QStringLiteral QLatin1String
-#endif
 
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
@@ -143,9 +132,8 @@ KMixWindow::~KMixWindow()
 	ControlManager::instance().removeListener(this);
 
 	delete m_dsm;
-#ifndef X_KMIX_KF5_BUILD
 	delete osdWidget;
-#endif
+
 	// -1- Cleanup Memory: clearMixerWidgets
 	while (m_wsMixers->count() != 0)
 	{
@@ -255,9 +243,7 @@ void KMixWindow::initActions()
 	action->setText(i18n("Load volume profile 4"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes4()));
 
-#ifndef X_KMIX_KF5_BUILD
 	osdWidget = new OSDWidget();
-#endif
 
 	createGUI(QLatin1String("kmixui.rc"));
 }
@@ -268,31 +254,18 @@ void KMixWindow::initActionsLate()
 	{
 		CLASS_Action* globalAction = actionCollection()->addAction(QStringLiteral("increase_volume"));
 		globalAction->setText(i18n("Increase Volume"));
-
-#ifdef X_KMIX_KF5_BUILD
-		KGlobalAccel::setGlobalShortcut(globalAction, Qt::Key_VolumeUp);
-#else
 		globalAction->setGlobalShortcut(CLASS_KShortcut(Qt::Key_VolumeUp));
-#endif
 
 		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotIncreaseVolume()));
 
 		globalAction = actionCollection()->addAction(QStringLiteral("decrease_volume"));
 		globalAction->setText(i18n("Decrease Volume"));
-#ifdef X_KMIX_KF5_BUILD
-		KGlobalAccel::setGlobalShortcut(globalAction, Qt::Key_VolumeDown);
-#else
 		globalAction->setGlobalShortcut(CLASS_KShortcut(Qt::Key_VolumeDown));
-#endif
 		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotDecreaseVolume()));
 
 		globalAction = actionCollection()->addAction(QStringLiteral("mute"));
 		globalAction->setText(i18n("Mute"));
-#ifdef X_KMIX_KF5_BUILD
-		KGlobalAccel::setGlobalShortcut(globalAction, Qt::Key_VolumeMute);
-#else
 		globalAction->setGlobalShortcut(CLASS_KShortcut(Qt::Key_VolumeMute));
-#endif
 		connect(globalAction, SIGNAL(triggered(bool)), SLOT(slotMute()));
 	}
 }
@@ -338,11 +311,7 @@ void KMixWindow::initWidgets()
 
 void KMixWindow::setInitialSize()
 {
-#ifdef X_KMIX_KF5_BUILD
-	KConfigGroup config(KSharedConfig::openConfig(), "Global");
-#else
 	KConfigGroup config(KGlobal::config(), "Global");
-#endif
 
 	// HACK: QTabWidget will bound its sizeHint to 200x200 unless scrollbuttons
 	// are disabled, so we disable them, get a decent sizehint and enable them
@@ -1149,25 +1118,6 @@ void KMixWindow::showVolumeDisplay()
 	if (md.get() == 0)
 		return; // shouldn't happen, but lets play safe
 
-#ifdef X_KMIX_KF5_BUILD
-    if (GlobalConfig::instance().data.showOSD) {
-        QDBusMessage msg = QDBusMessage::createMethodCall(
-            "org.kde.plasmashell",
-            "/org/kde/osdService",
-            "org.kde.osdService",
-            "volumeChanged"
-        );
-
-        int currentVolume = 0;
-        if (!md->isMuted()) {
-            currentVolume = md->playbackVolume().getAvgVolumePercent(Volume::MALL);
-        }
-
-        msg.setArguments(QList<QVariant>() << currentVolume);
-
-        QDBusConnection::sessionBus().asyncCall(msg);
-    }
-#else
     if (GlobalConfig::instance().data.showOSD) {
         // Setting volume not required here anymore, as the OSD updates it by itself
         osdWidget->show();
@@ -1180,7 +1130,6 @@ void KMixWindow::showVolumeDisplay()
     int posX = rect.x() + (rect.width() - size.width()) / 2;
     int posY = rect.y() + 4 * rect.height() / 5;
     osdWidget->setGeometry(posX, posY, size.width(), size.height());
-#endif
 }
 
 /**
@@ -1286,11 +1235,7 @@ void KMixWindow::slotHWInfo()
 void KMixWindow::slotKdeAudioSetupExec()
 {
 	QStringList args;
-#ifdef X_KMIX_KF5_BUILD
-    args << "kcmshell5"
-#else
     args << "kcmshell4"
-#endif
          << "kcm_phonon";
 	forkExec(args);
 }
