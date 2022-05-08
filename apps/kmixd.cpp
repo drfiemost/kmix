@@ -230,4 +230,4 @@ void KMixD::unplugged( const QString& udi)
 }
 
 
-#include "kmixd.moc"
+#include "moc_kmixd.cpp"

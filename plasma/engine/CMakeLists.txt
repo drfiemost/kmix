@@ -1,5 +1,7 @@
 include_directories( ../../ )
 
+set(CMAKE_AUTOMOC ON)
+
 set(mixer_engine_SRCS
 	mixerengine.cpp
 	mixerservice.cpp
