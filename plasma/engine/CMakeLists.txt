@@ -1,6 +1,9 @@
 include_directories( ../../ )
 
 set(CMAKE_AUTOMOC ON)
+set_property(SOURCE mixset_interface.h
+                    mixer_interface.h
+                    control_interface.h PROPERTY SKIP_AUTOMOC ON)
 
 set(mixer_engine_SRCS
 	mixerengine.cpp

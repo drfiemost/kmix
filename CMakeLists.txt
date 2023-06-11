@@ -11,6 +11,9 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
 endif()
 
 set(CMAKE_AUTOMOC ON)
+set_property(SOURCE controladaptor.h
+                    mixeradaptor.h
+                    mixsetadaptor.h PROPERTY SKIP_AUTOMOC ON)
 
 find_package(KDE4 REQUIRED)
 include(KDE4Defaults)
@@ -22,6 +25,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 # Do not yet REQUIRE Phonon. Hint: As long as we do not find_package(), ${KDE4_PHONON_LIBS} will be empty below, but that should not hurt.
 #find_package(Phonon REQUIRED)
 
+set(FPHSA_NAME_MISMATCHED TRUE)
 set(PA_VER "0.9.16")
 macro_optional_find_package(PulseAudio "${PA_VER}")
 macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "PulseAudio Audio Server"
