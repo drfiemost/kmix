@@ -19,8 +19,6 @@ find_package(KDE4 REQUIRED)
 include(KDE4Defaults)
 include(MacroLibrary)
 
-add_definitions(-DKDE_NO_DEPRECATED)
-
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 
