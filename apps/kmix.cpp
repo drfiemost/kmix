@@ -71,7 +71,6 @@
 
 #define CLASS_Action KAction
 #define CLASS_KShortcut KShortcut
-#define QStringLiteral QLatin1String
 
 /* KMixWindow
  * Constructs a mixer window (KMix main window)
