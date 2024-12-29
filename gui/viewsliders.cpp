@@ -355,7 +355,7 @@ void ViewSliders::configurationUpdate()
 		MDWSlider* mdw = ::qobject_cast<MDWSlider*>(_mdws[i]);
 		if (mdw && mdw->isVisibleTo(this))
 		{
-			labelExtent = qMax(labelExtent, mdw->labelExtentHint());
+			labelExtent = std::max(labelExtent, mdw->labelExtentHint());
 			//kDebug() << "########## EXTENT for " << id() << " is " << labelExtent;
 			haveCaptureLEDs = haveCaptureLEDs || mdw->hasCaptureLED();
 			haveMuteButtons = haveMuteButtons || mdw->hasMuteButton();

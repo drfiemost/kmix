@@ -377,7 +377,7 @@ void MDWSlider::createWidgets( bool showMuteButton, bool showCaptureLED, bool in
 		int max = 80;
 		QStringList words = m_mixdevice->readableName().split(QChar(' '));
 		foreach (QString name, words)
-			max = qMax(max,QLabel(name).sizeHint().width());
+			max = std::max(max,QLabel(name).sizeHint().width());
 //		if (words.size()>1 && m_label)
 //			m_label->setMinimumWidth(80);
 //		if (m_label->sizeHint().width()>max && m_label->sizeHint().width()>80)
