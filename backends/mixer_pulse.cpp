@@ -34,9 +34,6 @@
 
 #include <pulse/glib-mainloop.h>
 #include <pulse/ext-stream-restore.h>
-#if defined(HAVE_CANBERRA)
-#  include <canberra.h>
-#endif
 
 // PA_VOLUME_UI_MAX landed in pulseaudio-0.9.23, so this can be removed when/if
 // minimum requirement is ever bumped up (from 0.9.12 currently)
@@ -59,10 +56,6 @@ static pa_glib_mainloop *s_mainloop = NULL;
 static pa_context *s_context = NULL;
 static enum { UNKNOWN, ACTIVE, INACTIVE } s_pulseActive = UNKNOWN;
 static int s_outstandingRequests = 0;
-
-#if defined(HAVE_CANBERRA)
-static ca_context *s_ccontext = NULL;
-#endif
 
 QMap<int,Mixer_PULSE*> s_mixers;
 
@@ -1033,15 +1026,6 @@ Mixer_PULSE::Mixer_PULSE(Mixer *mixer, int devnum) : Mixer_Backend(mixer, devnum
             Q_ASSERT(s_mainloop);
 
             connectToDaemon();
-
-#if defined(HAVE_CANBERRA)
-            int ret = ca_context_create(&s_ccontext);
-            if (ret < 0) {
-                kDebug(67100) << "Disabling Sound Feedback. Canberra context failed.";
-                s_ccontext = NULL;
-            } else
-                ca_context_set_driver(s_ccontext, "pulse");
-#endif
         }
 
         kDebug(67100) <<  "PulseAudio status: " << (s_pulseActive==UNKNOWN ? "Unknown (bug)" : (s_pulseActive==ACTIVE ? "Active" : "Inactive"));
@@ -1060,13 +1044,6 @@ Mixer_PULSE::~Mixer_PULSE()
         --refcount;
         if (0 == refcount)
         {
-#if defined(HAVE_CANBERRA)
-            if (s_ccontext) {
-                ca_context_destroy(s_ccontext);
-                s_ccontext = NULL;
-            }
-#endif
-
             if (s_context) {
                 pa_context_unref(s_context);
                 s_context = NULL;
@@ -1196,44 +1173,6 @@ int Mixer_PULSE::writeVolumeToHW( const QString& id, shared_ptr<MixDevice> md )
                     return Mixer::ERR_READ;
                 }
                 pa_operation_unref(o);
-
-#if defined(HAVE_CANBERRA)
-                if (s_ccontext && Mixer::getBeepOnVolumeChange() ) {
-                    int playing = 0;
-                    int cindex = 2; // Note "2" is simply the index we've picked. It's somewhat irrelevant.
-
-                    
-                    ca_context_playing(s_ccontext, cindex, &playing);
-
-                    // NB Depending on how this is desired to work, we may want to simply
-                    // skip playing, or cancel the currently playing sound and play our
-                    // new one... for now, let's do the latter.
-                    if (playing) {
-                        ca_context_cancel(s_ccontext, cindex);
-                        playing = 0;
-                    }
-                    
-                    if (!playing) {
-                        char dev[64];
-
-                        snprintf(dev, sizeof(dev), "%lu", (unsigned long) iter->index);
-                        ca_context_change_device(s_ccontext, dev);
-
-                        // Ideally we'd use something like ca_gtk_play_for_widget()...
-                        ca_context_play(
-                            s_ccontext,
-                            cindex,
-                            CA_PROP_EVENT_DESCRIPTION, i18n("Volume Control Feedback Sound").toUtf8().constData(),
-                            CA_PROP_EVENT_ID, "audio-volume-change",
-                            CA_PROP_CANBERRA_CACHE_CONTROL, "permanent",
-                            CA_PROP_CANBERRA_ENABLE, "1",
-                            NULL
-                        );
-
-                        ca_context_change_device(s_ccontext, NULL);
-                    }
-                }
-#endif
 
                 return 0;
             }

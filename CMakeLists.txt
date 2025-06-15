@@ -33,10 +33,6 @@ macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "PulseAudio Audio Server"
 
 find_package(GLIB2)
 
-macro_optional_find_package(Canberra)
-macro_log_feature(CANBERRA_FOUND "libcanberra" "libcanberra audio library"
-    "http://0pointer.de/lennart/projects/libcanberra/" FALSE "" "libcanberra is needed for kmix sound feedback")
-
 find_package(Alsa)
 if(ALSA_FOUND)
 	alsa_configure_file(${CMAKE_BINARY_DIR}/config-alsa.h)
@@ -45,6 +41,7 @@ endif(ALSA_FOUND)
 
 add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=67100)
+add_definitions(-DKDE_NO_DEPRECATED)
 
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 if(MSVC)
@@ -78,13 +75,6 @@ if (PULSEAUDIO_FOUND)
 
   include_directories(${PULSEAUDIO_INCLUDE_DIR})
 endif (PULSEAUDIO_FOUND)
-
-if (CANBERRA_FOUND)
-  add_definitions(-DHAVE_CANBERRA)
-
-  include_directories(${CANBERRA_INCLUDE_DIRS})
-endif (CANBERRA_FOUND)
-
 
 ####################################################################################################
 ########### definitions: DBUSADAPTOR ###############################################################
@@ -180,10 +170,6 @@ if (PULSEAUDIO_FOUND)
     target_link_libraries(kdeinit_kmix ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (PULSEAUDIO_FOUND)
 
-if (CANBERRA_FOUND)
-  target_link_libraries(kdeinit_kmix ${CANBERRA_LIBRARIES})
-endif (CANBERRA_FOUND)
-
 install(TARGETS kdeinit_kmix  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmix kdeinit_kmix )
@@ -225,10 +211,6 @@ endif (HAVE_LIBASOUND2)
 if (PULSEAUDIO_FOUND)
     target_link_libraries(kded_kmixd ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (PULSEAUDIO_FOUND)
-
-if (CANBERRA_FOUND)
-  target_link_libraries(kded_kmixd ${CANBERRA_LIBRARIES})
-endif (CANBERRA_FOUND)
 
 install(TARGETS kded_kmixd DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -275,10 +257,6 @@ endif (HAVE_LIBASOUND2)
 if (PULSEAUDIO_FOUND)
     target_link_libraries(kdeinit_kmixctrl ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
 endif (PULSEAUDIO_FOUND)
-
-if (CANBERRA_FOUND)
-  target_link_libraries(kdeinit_kmixctrl ${CANBERRA_LIBRARIES})
-endif (CANBERRA_FOUND)
 
 ########### next target ###############
 add_subdirectory( plasma )
