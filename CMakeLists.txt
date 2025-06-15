@@ -25,12 +25,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 # Do not yet REQUIRE Phonon. Hint: As long as we do not find_package(), ${KDE4_PHONON_LIBS} will be empty below, but that should not hurt.
 #find_package(Phonon REQUIRED)
 
-set(FPHSA_NAME_MISMATCHED TRUE)
-set(PA_VER "0.9.16")
-macro_optional_find_package(PulseAudio "${PA_VER}")
-macro_log_feature(PULSEAUDIO_FOUND "PulseAudio" "PulseAudio Audio Server"
-    "http://www.pulseaudio.org/" FALSE "${PA_VER}" "libpulse is needed to let KMix control PulseAudio")
-
 find_package(GLIB2)
 
 find_package(Alsa)
@@ -70,12 +64,6 @@ add_subdirectory( pics )
 add_subdirectory( profiles ) 
 #add_subdirectory( tests )
 
-if (PULSEAUDIO_FOUND)
-  add_definitions(-DHAVE_PULSE)
-
-  include_directories(${PULSEAUDIO_INCLUDE_DIR})
-endif (PULSEAUDIO_FOUND)
-
 ####################################################################################################
 ########### definitions: DBUSADAPTOR ###############################################################
 ####################################################################################################
@@ -104,11 +92,6 @@ if (HAVE_LIBASOUND2)
   set(kmix_backend_SRCS ${kmix_backend_SRCS}
       backends/mixer_alsa9.cpp )
 endif (HAVE_LIBASOUND2)
-
-if (PULSEAUDIO_FOUND)
-  set(kmix_backend_SRCS ${kmix_backend_SRCS}
-      backends/mixer_pulse.cpp )
-endif (PULSEAUDIO_FOUND)
 
 
 set(CMAKE_AUTOMOC ON)
@@ -166,10 +149,6 @@ if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmix ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
 
-if (PULSEAUDIO_FOUND)
-    target_link_libraries(kdeinit_kmix ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (PULSEAUDIO_FOUND)
-
 install(TARGETS kdeinit_kmix  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmix kdeinit_kmix )
@@ -207,10 +186,6 @@ target_link_libraries(kded_kmixd ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXM
 if (HAVE_LIBASOUND2)
     target_link_libraries(kded_kmixd ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
-
-if (PULSEAUDIO_FOUND)
-    target_link_libraries(kded_kmixd ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (PULSEAUDIO_FOUND)
 
 install(TARGETS kded_kmixd DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -253,10 +228,6 @@ target_link_libraries(kdeinit_kmixctrl ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${Q
 if (HAVE_LIBASOUND2)
     target_link_libraries(kdeinit_kmixctrl ${ASOUND_LIBRARY})
 endif (HAVE_LIBASOUND2)
-
-if (PULSEAUDIO_FOUND)
-    target_link_libraries(kdeinit_kmixctrl ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_MAINLOOP_LIBRARY} ${GLIB2_LIBRARIES})
-endif (PULSEAUDIO_FOUND)
 
 ########### next target ###############
 add_subdirectory( plasma )

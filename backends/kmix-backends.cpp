@@ -95,10 +95,6 @@ MixerFactory g_mixerFactories[] = {
     { SUN_getMixer, SUN_getDriverName },
 #endif
 
-#if defined(HAVE_PULSE)
-    { PULSE_getMixer, PULSE_getDriverName },
-#endif
-
 #if defined(HAVE_LIBASOUND2)
     { ALSA_getMixer, ALSA_getDriverName },
 #endif
